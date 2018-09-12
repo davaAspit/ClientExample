@@ -24,12 +24,10 @@ namespace ClientExample
                     string request = Console.ReadLine();
                     if (request.ToLower() == "exit")
                         break;
-                    client.SendLine(request);
 
-                    if (client.ReceiveLine(out string response))
-                    {
-                        Console.WriteLine("Svar fra server: " + response);
-                    }
+                    string response = client.SendAndReceive(request);
+                    
+                    Console.WriteLine("Svar fra server: " + response);
                 }
             }
 

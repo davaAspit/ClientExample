@@ -31,52 +31,32 @@ namespace ClientExample
         }
 
         /// <summary>
-        /// Used to send a request to the server.
+        /// Used to send a request to the server and receive the response.
         /// </summary>
         /// <param name="request">The request to the server</param>
-        /// <returns>A boolean defining whether it went good or bad</returns>
-        public bool SendLine(string request)
+        /// <returns>The response from the server (if everything went good). Otherwise an error message</returns>
+        public string SendAndReceive(string request)
         {
+            string response = "";
             try
             {
                 using(ServerConnection = new TcpClient(Hostname, Port))
                 using (NetworkStream ns = ServerConnection.GetStream())
                 using (StreamWriter writer = new StreamWriter(ns))
+                using (StreamReader reader = new StreamReader(ns))
                 {
                     writer.AutoFlush = true;
 
                     writer.WriteLine(request);
-                }
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-            return true;
-        }
 
-        /// <summary>
-        /// Reads a line from the server.
-        /// </summary>
-        /// <param name="response">The response from the server</param>
-        /// <returns>A boolean defining whether it went good or bad</returns>
-        public bool ReceiveLine(out string response)
-        {
-            response = "";
-            try
-            {
-                using (ServerConnection = new TcpClient(Hostname, Port))
-                using (NetworkStream ns = ServerConnection.GetStream())
-                using (StreamReader reader = new StreamReader(ns))
-                {
                     response = reader.ReadLine();
                 }
             }
-            catch (IOException)
+            catch (IOException ex)
             {
-                return false;
+                response = $"Fejl: {ex.Message}";
             }
-            return true;
+            return response;
         }
 
         public void Dispose()
