@@ -13,7 +13,11 @@ namespace ClientExample
         /// <summary>
         /// Used to store the server connection
         /// </summary>
-        public TcpClient ServerConnection { get; }
+        public TcpClient ServerConnection { get; private set; }
+
+        public string Hostname { get; }
+        public int Port { get; }
+
 
         /// <summary>
         /// Initializes the server connection with the the hostname and port
@@ -22,7 +26,8 @@ namespace ClientExample
         /// <param name="port">The port of the server</param>
         public Client(string hostname, int port)
         {
-            ServerConnection = new TcpClient(hostname, port);
+            Hostname = hostname;
+            Port = port;
         }
 
         /// <summary>
@@ -34,6 +39,7 @@ namespace ClientExample
         {
             try
             {
+                using(ServerConnection = new TcpClient(Hostname, Port))
                 using (NetworkStream ns = ServerConnection.GetStream())
                 using (StreamWriter writer = new StreamWriter(ns))
                 {
@@ -59,6 +65,7 @@ namespace ClientExample
             response = "";
             try
             {
+                using (ServerConnection = new TcpClient(Hostname, Port))
                 using (NetworkStream ns = ServerConnection.GetStream())
                 using (StreamReader reader = new StreamReader(ns))
                 {
